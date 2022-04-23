@@ -5,14 +5,29 @@
 Displays GPU utilization, hardware video decoder utilization, and memory usage.
 
 ### Requirements
-  * GNU `bash`
-  * `nvidia-smi`
+    * GNU `bash`
+    * `nvidia-smi`
 
 ### Variables
-  * `GPU_ID:` Which GPU to fetch stats from. Default 0
-  * `SEPARATOR:` Separates different fields in long display. Default '|'
-  * `COLOR_IDLE:` Hex code for color displayed when GPU is idle
-  * `COLOR_ERROR:` Hex code for error message color
+    * `GPU_ID:` Which GPU to fetch stats from. Default 0
+    * `SEPARATOR:` Separates different fields in long display. Default "|"
+    * `COLOR_IDLE:` Hex code for color displayed when GPU is idle. Default "#2EAFFF"
+    * `COLOR_ERROR:` Hex code for error message color. Default "#FF898E"
+
+## ompl-status
+Displays a given tagstring with playback controls for the OMPL music player
+
+### Requirements
+    * [OMPL](https://github.com/Beinsezii/ompl)
+
+### Variables
+    * `ICON_PAUSE` `ICON_PLAY` `ICON_STOP` icons to display for different player states. All default to ""
+    * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` colors for different player states. Defaults...
+        * `COLOR_PAUSE`: "#2EAFFF"
+        * `COLOR_PLAY`: "#73BC6F"
+        * `COLOR_STOP`: ""
+
+    * `COLOR_ERROR:` Hex code for error message color. Default "#FF898E"
 
 ## F.A.Q.
 Question|Answer
