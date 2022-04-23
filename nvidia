@@ -4,7 +4,7 @@ GPU_ID=${GPU_ID:-"0"}
 COLOR_IDLE=${COLOR_IDLE:-"#2EAFFF"}
 COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
 
-smi=$(nvidia-smi -q -i 0)
+smi=$(nvidia-smi -q -i $GPU_ID)
 re=".*"\
 "Clocks Throttle Reasons[^a-zA-Z]*"\
 "Idle *: *([a-zA-Z ]*).*"\
