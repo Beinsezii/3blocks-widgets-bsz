@@ -21,11 +21,15 @@ Displays a given tagstring with playback controls for the OMPL music player
   * [OMPL](https://github.com/Beinsezii/ompl)
 
 ### Variables
+  * `TAGSTRING` : Long tagstring display. Default `<title><artist| / <artist>><album| / <album>>`
+  * `TAGSTRING_SHORT` : Short tagstring display. Default `title`
+
   * `ICON_PAUSE` `ICON_PLAY` `ICON_STOP` : icons to display for different player states. All default to `""`
+
   * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
-      * `COLOR_PAUSE` : `#2EAFFF`
-      * `COLOR_PLAY` : `#73BC6F`
-      * `COLOR_STOP` : `""`
+    * `COLOR_PAUSE` : `#2EAFFF`
+    * `COLOR_PLAY` : `#73BC6F`
+    * `COLOR_STOP` : `""`
 
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
