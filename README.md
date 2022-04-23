@@ -4,11 +4,11 @@
 ## nvidia.sh
 Displays GPU usage, hardware video decoder usage, and memory usage.
 
-Requirements
+### Requirements
   * GNU `bash`
   * `nvidia-smi`
 
-Variables
+### Variables
   * `GPU_ID:` Which GPU to fetch stats from. 0 by default.
   * `COLOR_IDLE:` Hex code for color displayed when GPU is idle
   * `COLOR_ERROR:` Hex code for error message colors
