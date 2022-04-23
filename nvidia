@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# !/usr/bin/env bash
 
 GPU_ID=${GPU_ID:-"0"}
 SEPARATOR=${SEPARATOR:-"|"}
@@ -43,3 +43,5 @@ else
     echo "nvidia fail"
     echo $COLOR_ERROR
 fi
+
+exit 0
