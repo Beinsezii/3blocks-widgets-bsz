@@ -10,6 +10,7 @@ Displays GPU usage, hardware video decoder usage, and memory usage.
 
 ### Variables
   * `GPU_ID:` Which GPU to fetch stats from. 0 by default.
+  * `SEPARATOR:` Separates different fields in long display. Default '|'
   * `COLOR_IDLE:` Hex code for color displayed when GPU is idle
   * `COLOR_ERROR:` Hex code for error message colors
 

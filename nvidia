@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 GPU_ID=${GPU_ID:-"0"}
+SEPARATOR=${SEPARATOR:-"|"}
 COLOR_IDLE=${COLOR_IDLE:-"#2EAFFF"}
 COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
 
@@ -27,7 +28,7 @@ then
     vid="${BASH_REMATCH[5]}"
 
     #long
-    echo GPU $GPU_ID 3D: $util% VID: $vid% $memu / $memt
+    echo GPU $GPU_ID${SEPARATOR}3D $util%${SEPARATOR}VID $vid%${SEPARATOR}$memu / $memt
     #short
     echo \#$GPU_ID $util% $vid% $memu
 
