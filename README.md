@@ -20,6 +20,12 @@ Displays a given tagstring with playback controls for the OMPL music player
 ### Requirements
   * [OMPL](https://github.com/Beinsezii/ompl)
 
+### Controls
+  * LMB : Play/pause
+  * RMB: Stop
+  * Scroll Up: Next track
+  * Scroll Down: Previous track
+
 ### Variables
   * `TAGSTRING` : Long tagstring display. Default `<title><artist| / <artist>><album| / <album>>`
   * `TAGSTRING_SHORT` : Short tagstring display. Default `title`
@@ -32,6 +38,31 @@ Displays a given tagstring with playback controls for the OMPL music player
     * `COLOR_STOP` : `""`
 
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
+
+## ompl-volume
+Displays and controls volume for the OMPL music player
+
+### Requirements
+  * [OMPL](https://github.com/Beinsezii/ompl)
+  * `bc` for hi/lo icons
+
+### Controls
+  * LMB/Scroll Up : Increase volume
+  * RMB/Scroll Down : Decrease volume
+
+### Variables
+  * `ICON_LO` `ICON_MID` `ICON_HI` : icons to display for different Volume levels. Defaults...
+    * `COLOR_PAUSE` : `< `
+    * `COLOR_PLAY` : `<: `
+    * `COLOR_STOP` : `<# `
+
+  * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
+    * `COLOR_PAUSE` : `#2EAFFF`
+    * `COLOR_PLAY` : `#73BC6F`
+    * `COLOR_STOP` : `""`
+
+  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
+
 
 ## F.A.Q.
 Question|Answer

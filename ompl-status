@@ -14,27 +14,23 @@ COLOR_STOP=${COLOR_STOP:-""}
 COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
 
 case "$BLOCK_BUTTON" in
-    1) ompl play-pause;;
-    3) ompl stop;;
-    4) ompl next;;
-    5) ompl previous;;
-
+1) ompl play-pause ;;
+3) ompl stop ;;
+4) ompl next ;;
+5) ompl previous ;;
 esac
 
 status=$(ompl print tagstring "$TAGSTRING")
 status_short=$(ompl print tagstring "$TAGSTRING_SHORT")
 state=$(ompl print status)
 
-if [ "$state" = "playing" ]
-then
+if [ "$state" = "playing" ]; then
     icon=$ICON_PLAY
     color=$COLOR_PLAY
-elif [ "$state" = "paused" ]
-then
+elif [ "$state" = "paused" ]; then
     icon=$ICON_PAUSE
     color=$COLOR_PAUSE
-elif [ "$state" = "stopped" ]
-then
+elif [ "$state" = "stopped" ]; then
     icon=$ICON_STOP
     color=$COLOR_STOP
 else
@@ -42,11 +38,12 @@ else
     color=$COLOR_ERROR
 fi
 
-if [ "$status" != "" ]
-then
+if [ "$status" != "" ]; then
     echo "$icon $status"
     echo "$icon $status_short"
-    echo $color
+    if [ $color != "" ]; then
+        echo $color
+    fi
 else
     echo "OMPL Off"
     echo "OMPL Off"

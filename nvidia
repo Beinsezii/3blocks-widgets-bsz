@@ -1,4 +1,4 @@
-# !/usr/bin/env bash
+#! /usr/bin/env bash
 
 GPU_ID=${GPU_ID:-"0"}
 SEPARATOR=${SEPARATOR:-"|"}
@@ -19,8 +19,7 @@ re=".*"\
 "Encoder *: *[0-9]+[^a-zA-Z]*"\
 "Decoder *: *([0-9]+).*"
 
-if [[ $smi =~ $re ]]
-then
+if [[ $smi =~ $re ]]; then
     idle="${BASH_REMATCH[1]}"
     memt="${BASH_REMATCH[2]}"
     memu="${BASH_REMATCH[3]}"
@@ -33,8 +32,7 @@ then
     echo \#$GPU_ID $util% $vid% $memu
 
     #color
-    if [ "$idle" == "Active" ]
-    then
+    if [ "$idle" == "Active" ]; then
         echo $COLOR_IDLE
     fi
 
