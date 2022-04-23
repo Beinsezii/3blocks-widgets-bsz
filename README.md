@@ -2,17 +2,17 @@
 ### My own i3blocks widgets/blocklets
 
 ## nvidia
-Displays GPU usage, hardware video decoder usage, and memory usage.
+Displays GPU utilization, hardware video decoder utilization, and memory usage.
 
 ### Requirements
   * GNU `bash`
   * `nvidia-smi`
 
 ### Variables
-  * `GPU_ID:` Which GPU to fetch stats from. 0 by default.
+  * `GPU_ID:` Which GPU to fetch stats from. Default 0
   * `SEPARATOR:` Separates different fields in long display. Default '|'
   * `COLOR_IDLE:` Hex code for color displayed when GPU is idle
-  * `COLOR_ERROR:` Hex code for error message colors
+  * `COLOR_ERROR:` Hex code for error message color
 
 ## F.A.Q.
 Question|Answer
