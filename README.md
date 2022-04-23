@@ -1,2 +1,20 @@
-# 3blocks-widgets-bsz
-My own i3blocks widgets
+# bsz-i3blocks-widgets
+### My own i3blocks widgets
+
+## nvidia.sh
+Displays GPU usage, hardware video decoder usage, and memory usage.
+
+Requirements
+  * GNU `bash`
+  * `nvidia-smi`
+
+Variables
+  * `GPU_ID:` Which GPU to fetch stats from. 0 by default.
+  * `COLOR_IDLE:` Hex code for color displayed when GPU is idle
+  * `COLOR_ERROR:` Hex code for error message colors
+
+## F.A.Q.
+Question|Answer
+---|---
+WTF about [i3blocks-widgets-rs](https://github.com/Beinsezii/i3blocks-widgets-rs)???|Discontinued. Future updates will go here. Having to recompile everything just to change a regex pattern was pain. Writing the code was easier, deploying was way harder.
+Some of these already exist in [i3blocks-contrib](https://github.com/vivien/i3blocks-contrib) you fucking waste of clock cycles. By creating your own repository that makes little of all those who came before you, not only do you smear their name by indirectly saying their contributions aren't good enough for you, but you also show little regard for the current climate crisis with your blatant disrepesct for thermoelectric efficiency. In fact this whole project reeks of "I'm ignorant to the current socio-economic and political happenings of the world". You were so busy trying to be a wolf that you wrapped back around into becoming a sheep. It's so pathetic I almost pity you. Almost.|strawman ouroboros
