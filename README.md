@@ -1,5 +1,5 @@
-# bsz-i3blocks-widgets
-### My own i3blocks widgets
+# bsz-i3blocklets
+### My own i3blocks widgets/blocklets
 
 ## nvidia.sh
 Displays GPU usage, hardware video decoder usage, and memory usage.
