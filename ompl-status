@@ -1,0 +1,56 @@
+#! /usr/bin/env bash
+
+TAGSTRING=${TAGSTRING:-"<title><artist| / <artist>><album| / <album>>"}
+TAGSTRING_SHORT=${TAGSTRING_SHORT:-"title"}
+
+ICON_PAUSE=${ICON_PAUSE:-""}
+ICON_PLAY=${ICON_PLAY:-""}
+ICON_STOP=${ICON_STOP:-""}
+
+COLOR_PAUSE=${COLOR_PAUSE:-"#2EAFFF"}
+COLOR_PLAY=${COLOR_PLAY:-"#73BC6F"}
+COLOR_STOP=${COLOR_STOP:-""}
+
+COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
+
+case "$BLOCK_BUTTON" in
+    1) ompl play-pause;;
+    3) ompl stop;;
+    4) ompl next;;
+    5) ompl previous;;
+
+esac
+
+status=$(ompl print tagstring "$TAGSTRING")
+status_short=$(ompl print tagstring "$TAGSTRING_SHORT")
+state=$(ompl print status)
+
+if [ "$state" = "playing" ]
+then
+    icon=$ICON_PLAY
+    color=$COLOR_PLAY
+elif [ "$state" = "paused" ]
+then
+    icon=$ICON_PAUSE
+    color=$COLOR_PAUSE
+elif [ "$state" = "stopped" ]
+then
+    icon=$ICON_STOP
+    color=$COLOR_STOP
+else
+    icon="[?]"
+    color=$COLOR_ERROR
+fi
+
+if [ "$status" != "" ]
+then
+    echo "$icon $status"
+    echo "$icon $status_short"
+    echo $color
+else
+    echo "OMPL Off"
+    echo "OMPL Off"
+    echo $COLOR_ERROR
+fi
+
+exit 0
