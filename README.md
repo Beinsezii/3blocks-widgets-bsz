@@ -1,7 +1,7 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
-## nvidia.sh
+## nvidia
 Displays GPU usage, hardware video decoder usage, and memory usage.
 
 ### Requirements
