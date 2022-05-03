@@ -30,6 +30,8 @@ Displays a given tagstring with playback controls for the OMPL music player
   * `TAGSTRING` : Long tagstring display. Default `<title><artist| / <artist>><album| / <album>>`
   * `TAGSTRING_SHORT` : Short tagstring display. Default `title`
 
+  * `SIGNAL` : If set to a signal number, will kill the appropriate i3blocks widget upon action. Intended for ompl-volume.
+
   * `ICON_PAUSE` `ICON_PLAY` `ICON_STOP` : icons to display for different player states. All default to `""`
 
   * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
