@@ -14,6 +14,18 @@ Displays GPU utilization, hardware video decoder utilization, and memory usage.
   * `COLOR_IDLE` : Hex code for color displayed when GPU is idle. Default `#2EAFFF`
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
+## easyeffects-toggle
+Simple widget for EasyEffects global bypass
+
+### Variables
+  * `COLOR_ON` : Color when on (no bypass)
+  * `COLOR_OFF` :  Color when off (bypass enabled)
+  * `COLOR_ERROR` : Color if anything else happens
+
+### Controls
+  * LMB : Turn on (disable bypass)
+  * RMB : Turn off (enable bypass)
+
 ## ompl-status
 Displays a given tagstring with playback controls for the OMPL music player
 
