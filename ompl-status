@@ -51,7 +51,7 @@ fi
 if [ "$status" != "" ]; then
     echo "$icon $status"
     echo "$icon $status_short"
-    if [ $color != "" ]; then
+    if [ "$color" != "" ]; then
         echo $color
     fi
 else

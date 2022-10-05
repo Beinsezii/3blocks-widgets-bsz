@@ -43,7 +43,7 @@ fi
 if [ "$volume" != "" ]; then
     echo $icon$volume
     echo $icon$volume
-    if [ $color != "" ]; then
+    if [ "$color" != "" ]; then
         echo $color
     fi
 else
