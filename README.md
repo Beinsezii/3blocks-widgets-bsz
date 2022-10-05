@@ -14,6 +14,37 @@ Displays GPU utilization, hardware video decoder utilization, and memory usage.
   * `COLOR_IDLE` : Hex code for color displayed when GPU is idle. Default `#2EAFFF`
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
+## wp-status
+Displays and controls volume for WirePlumber
+
+### Requirements
+  * `bash`
+  * `bc` for hi/lo icons
+
+### Controls
+  * Scroll Up : Increase volume
+  * Scroll Down : Decrease volume
+  * LMB : Toggle mute
+  * RMB : Reset volume to 1.0
+
+### Variables
+  * `DEVICE` : Device ID to use. Default `@DEFAULT_AUDIO_SINK@`
+  * `PREFIX` : Prefix applied to all icons. Default none. Handy for running a 2nd time for source
+
+  * `ICON_LO` `ICON_MID` `ICON_HI` `ICON_MUTE` : icons to display for different Volume levels. Defaults...
+    * `ICON_LO` : `<) `
+    * `ICON_MID` : `<)) `
+    * `ICON_HI` : `<))) `
+    * `ICON_MUTE` : `< `
+
+  * `COLOR_LO` `COLOR_MID` `COLOR_HI` `COLOR_MUTE` : colors for different states. Defaults...
+  * COLOR_LO : `#2EAFFF`
+  * COLOR_MID : ` `
+  * COLOR_HI : `#D3A350`
+  * COLOR_MUTE : `#73BC6F`
+
+  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
+
 ## easyeffects-toggle
 Simple widget for EasyEffects global bypass
 
@@ -66,9 +97,9 @@ Displays and controls volume for the OMPL music player
 
 ### Variables
   * `ICON_LO` `ICON_MID` `ICON_HI` : icons to display for different Volume levels. Defaults...
-    * `COLOR_PAUSE` : `< `
-    * `COLOR_PLAY` : `<: `
-    * `COLOR_STOP` : `<# `
+    * `ICON_LO` : `< `
+    * `ICON_MID` : `<: `
+    * `ICON_HI` : `<# `
 
   * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
     * `COLOR_PAUSE` : `#2EAFFF`
