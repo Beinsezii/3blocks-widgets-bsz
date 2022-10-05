@@ -1,0 +1,37 @@
+#! /usr/bin/env bash
+
+COLOR_ON=${COLOR_ON:-""}
+COLOR_OFF=${COLOR_OFF:-"#2EAFFF"}
+
+COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
+
+case "$BLOCK_BUTTON" in
+1) easyeffects -b 2 ;;
+3) easyeffects -b 1 ;;
+esac
+
+state=$(easyeffects -b 3)
+
+if [ $state == "0" ]
+then
+    echo "EasyEffects ON"
+    echo "EasyEffects ON"
+    if [ "$COLOR_ON" != "" ]; then
+        echo $COLOR_ON
+    fi
+elif [ $state == "1" ]
+then
+    echo "EasyEffects OFF"
+    echo "EasyEffects OFF"
+    if [ "$COLOR_OFF" != "" ]; then
+        echo $COLOR_OFF
+    fi
+else
+    echo "EasyEffects Err"
+    echo "EasyEffects Err"
+    if [ "$COLOR_ERROR" != "" ]; then
+        echo $COLOR_ERROR
+    fi
+fi
+
+exit 0
