@@ -1,19 +1,6 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
-## nvidia
-Displays GPU utilization, hardware video decoder utilization, and memory usage.
-
-### Requirements
-  * GNU `bash`
-  * `nvidia-smi`
-
-### Variables
-  * `GPU_ID` : Which GPU to fetch stats from. Default `0`
-  * `SEPARATOR` : Separates different fields in long display. Default `|`
-  * `COLOR_IDLE` : Hex code for color displayed when GPU is idle. Default `#2EAFFF`
-  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
-
 ## wp-status
 Displays and controls volume for WirePlumber
 
@@ -107,6 +94,25 @@ Displays and controls volume for the OMPL music player
     * `COLOR_STOP` : `""`
 
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
+
+
+# Archived
+
+## nvidia
+Displays GPU utilization, hardware video decoder utilization, and memory usage.
+
+Archived because I no longer have an nvidia gpu.
+
+### Requirements
+  * GNU `bash`
+  * `nvidia-smi`
+
+### Variables
+  * `GPU_ID` : Which GPU to fetch stats from. Default `0`
+  * `SEPARATOR` : Separates different fields in long display. Default `|`
+  * `COLOR_IDLE` : Hex code for color displayed when GPU is idle. Default `#2EAFFF`
+  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
+
 
 
 ## F.A.Q.

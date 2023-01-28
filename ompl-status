@@ -3,7 +3,7 @@
 TAGSTRING=${TAGSTRING:-"<title><artist| / <artist>><album| / <album>>"}
 TAGSTRING_SHORT=${TAGSTRING_SHORT:-"title"}
 
-SIGNAL=${SIGNAL:-""}
+VOL_SIGNAL=${VOL_SIGNAL:-""}
 
 ICON_PAUSE=${ICON_PAUSE:-""}
 ICON_PLAY=${ICON_PLAY:-""}
@@ -24,8 +24,8 @@ esac
 
 case "$BLOCK_BUTTON" in
 1 | 3 | 4 | 5)
-    if [ $SIGNAL != "" ]; then
-        pkill -RTMIN+$SIGNAL i3blocks
+    if [ $VOL_SIGNAL != "" ]; then
+        pkill -RTMIN+$VOL_SIGNAL i3blocks
     fi
     ;;
 esac
