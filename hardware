@@ -1,0 +1,92 @@
+#! /usr/bin/env bash
+
+RATE=${RATE:-"1.0"}
+
+COLOR_HIGH=${COLOR_HIGH:-"Orange"}
+COLOR_LOW=${COLOR_LOW:-"CornflowerBlue"}
+COLOR_ERROR=${COLOR_ERROR:-"Crimson"}
+
+read mem_used mem_total mem_percent <<< $(awk '
+/MemTotal:/ {total = $2/1024/1024}
+/MemAvailable:/ {
+    used = total-$2/1024/1024;
+    printf "%.1f %.1f %.1f", used, total, used/total*100
+}' /proc/meminfo)
+
+gpu_util=$(cat /sys/class/drm/card0/device/gpu_busy_percent)
+
+read vram_used vram_total vram_percent <<< $( awk '
+{
+    used=$1;
+    getline;
+    total=$1;
+    printf "%.1f %.1f %.1f", used/1024/1024/1024, total/1024/1024/1024, used/total*100
+}' /sys/class/drm/card0/device/mem_info_vram_used /sys/class/drm/card0/device/mem_info_vram_total )
+
+read cpu_util cores <<< $(awk '
+/cpu / {
+    if (iter==1) {
+        used_base=used
+        idle_base=idle
+        total_base=total
+    };
+    used=$2+$3+$4
+    idle=$5
+    total=used+idle
+    iter=1
+}
+END {
+    cores=(NR-2)/2
+    printf "%.1f %d", (used - used_base) / (total-total_base) * 100 * cores, cores
+}
+' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
+
+
+if [ ${gpu_util%.*} -gt 90 ]; then
+    gpu_color=" color=\"$COLOR_HIGH\""
+elif [ ${gpu_util%.*} -lt 10 ]; then
+    gpu_color=" color=\"$COLOR_LOW\""
+else
+    gpu_color=""
+fi
+
+if [ ${vram_percent%.*} -gt 70 ]; then
+    vram_color=" color=\"$COLOR_HIGH\""
+elif [ ${vram_percent%.*} -gt 90 ]; then
+    vram_color=" color=\"$COLOR_ERROR\""
+elif [ ${vram_percent%.*} -lt 10 ]; then
+    vram_color=" color=\"$COLOR_LOW\""
+else
+    vram_color=""
+fi
+
+if [ ${mem_percent%.*} -gt 70 ]; then
+    mem_color=" color=\"$COLOR_HIGH\""
+elif [ ${mem_percent%.*} -gt 90 ]; then
+    mem_color=" color=\"$COLOR_ERROR\""
+elif [ ${mem_percent%.*} -lt 10 ]; then
+    mem_color=" color=\"$COLOR_LOW\""
+else
+    mem_color=""
+fi
+
+if [ ${cpu_util%.*} -gt $((90*cores)) ]; then
+    cpu_color=" color=\"$COLOR_HIGH\""
+elif [ ${cpu_util%.*} -lt 100 ]; then
+    cpu_color=" color=\"$COLOR_LOW\""
+else
+    cpu_color=""
+fi
+
+echo "\
+3D: <span$gpu_color>$gpu_util%</span>  \
+VRAM: <span$vram_color>$vram_used / $vram_total</span>  \
+MEM: <span$mem_color>$mem_used / $mem_total</span>  \
+CPU: <span$cpu_color>$cpu_util%</span>"
+echo "\
+3D: <span$gpu_color>$gpu_util%</span> \
+VRAM: <span$vram_color>$vram_percent%</span> \
+MEM: <span$mem_color>$mem_percent%</span> \
+CPU: <span$cpu_color>$cpu_util%</span>"
+
+exit 0
