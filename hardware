@@ -1,9 +1,11 @@
 #! /usr/bin/env bash
 
 RATE=${RATE:-"1.0"}
+GPU=${GPU:-true}
 
 # 100 steps, LCH 60, 75, 30..210
 # converted to hex using crates.io/crates/colcon
+### HEATCOLORS ### {{{
 HEATCOLORS=(
 
 "#00ADD1"
@@ -108,6 +110,8 @@ HEATCOLORS=(
 "#FE544F"
 
 )
+### HEATCOLORS ### }}}
+
 
 function heatmap {
     count=${#HEATCOLORS[@]}
@@ -127,6 +131,34 @@ function heatmap {
 }
 
 
+output_long=""
+output_short=""
+
+
+### GPU ### {{{
+if $GPU; then
+
+    gpu_util=$(cat /sys/class/drm/card0/device/gpu_busy_percent)
+
+    read vram_used vram_total vram_percent <<< $( awk '
+    {
+        used=$1;
+        getline;
+        total=$1;
+        printf "%.1f %.1f %.1f", used/1024/1024/1024, total/1024/1024/1024, used/total*100
+    }' /sys/class/drm/card0/device/mem_info_vram_used /sys/class/drm/card0/device/mem_info_vram_total )
+
+gpu_color=$(heatmap ${gpu_util%.*})
+vram_color=$(heatmap ${vram_percent%.*})
+
+output_long+="3D: <span$gpu_color>$gpu_util%</span>  VRAM: <span$vram_color>$vram_used / $vram_total</span>  "
+output_short+="3D: <span$gpu_color>$gpu_util%</span> VRAM: <span$vram_color>$vram_percent%</span> "
+
+fi
+### GPU ### }}}
+
+
+### MEM ### {{{
 read mem_used mem_total mem_percent <<< $(awk '
 /MemTotal:/ {total = $2/1024/1024}
 /MemAvailable:/ {
@@ -134,16 +166,13 @@ read mem_used mem_total mem_percent <<< $(awk '
     printf "%.1f %.1f %.1f", used, total, used/total*100
 }' /proc/meminfo)
 
-gpu_util=$(cat /sys/class/drm/card0/device/gpu_busy_percent)
+mem_color=$(heatmap ${mem_percent%.*})
+output_long+="MEM: <span$mem_color>$mem_used / $mem_total</span>  "
+output_short+="MEM: <span$mem_color>$mem_percent%</span> "
+### MEM ### }}}
 
-read vram_used vram_total vram_percent <<< $( awk '
-{
-    used=$1;
-    getline;
-    total=$1;
-    printf "%.1f %.1f %.1f", used/1024/1024/1024, total/1024/1024/1024, used/total*100
-}' /sys/class/drm/card0/device/mem_info_vram_used /sys/class/drm/card0/device/mem_info_vram_total )
 
+### CPU ### {{{
 read cpu_util cores <<< $(awk '
 /cpu / {
     if (iter==1) {
@@ -162,20 +191,12 @@ END {
 }
 ' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
 
-gpu_color=$(heatmap ${gpu_util%.*})
-vram_color=$(heatmap ${vram_percent%.*})
-mem_color=$(heatmap ${mem_percent%.*})
 cpu_color=$(heatmap $((${cpu_util%.*} / cores )))
+output_long+="CPU: <span$cpu_color>$cpu_util%</span>"
+output_short+="CPU: <span$cpu_color>$cpu_util%</span>"
+### CPU ### }}}
 
-echo "\
-3D: <span$gpu_color>$gpu_util%</span>  \
-VRAM: <span$vram_color>$vram_used / $vram_total</span>  \
-MEM: <span$mem_color>$mem_used / $mem_total</span>  \
-CPU: <span$cpu_color>$cpu_util%</span>"
-echo "\
-3D: <span$gpu_color>$gpu_util%</span> \
-VRAM: <span$vram_color>$vram_percent%</span> \
-MEM: <span$mem_color>$mem_percent%</span> \
-CPU: <span$cpu_color>$cpu_util%</span>"
 
+echo $output_long
+echo $output_short
 exit 0
