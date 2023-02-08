@@ -2,9 +2,130 @@
 
 RATE=${RATE:-"1.0"}
 
-COLOR_HIGH=${COLOR_HIGH:-"Orange"}
-COLOR_LOW=${COLOR_LOW:-"CornflowerBlue"}
-COLOR_ERROR=${COLOR_ERROR:-"Crimson"}
+# 100 steps, LCH 60, 75, 30..210
+# converted to hex using crates.io/crates/colcon
+HEATCOLORS=(
+
+"#00ADD1"
+"#00ADCD"
+"#00ADC9"
+"#00ADC5"
+"#00AEC2"
+"#00AEBE"
+"#00AEBA"
+"#00AEB6"
+"#00AEB2"
+"#00AEAE"
+"#00AEAA"
+"#00AEA6"
+"#00AEA2"
+"#00AE9D"
+"#00AD99"
+"#00AD95"
+"#00AD91"
+"#00AD8D"
+"#00AD89"
+"#00AD84"
+"#00AD80"
+"#00AC7C"
+"#00AC78"
+"#00AC74"
+"#00AC70"
+"#00AC6B"
+"#00AB67"
+"#00AB63"
+"#00AB5F"
+"#00AA5B"
+"#00AA57"
+"#00AA53"
+"#00A94F"
+"#00A94B"
+"#00A947"
+"#00A842"
+"#00A83E"
+"#00A73A"
+"#10A736"
+"#22A632"
+"#2DA62D"
+"#36A529"
+"#3EA524"
+"#45A41F"
+"#4CA31A"
+"#52A314"
+"#57A20D"
+"#5DA104"
+"#62A100"
+"#67A000"
+"#6B9F00"
+"#709E00"
+"#749D00"
+"#799C00"
+"#7D9C00"
+"#819B00"
+"#859A00"
+"#899900"
+"#8D9800"
+"#919700"
+"#959500"
+"#999400"
+"#9D9300"
+"#A09200"
+"#A49100"
+"#A78F00"
+"#AB8E00"
+"#AE8D00"
+"#B28B00"
+"#B58A00"
+"#B98900"
+"#BC8700"
+"#BF8600"
+"#C28400"
+"#C58200"
+"#C88100"
+"#CB7F00"
+"#CE7E00"
+"#D17C00"
+"#D47A00"
+"#D77800"
+"#DA7700"
+"#DC7504"
+"#DF730C"
+"#E17112"
+"#E46F18"
+"#E66D1D"
+"#E96B21"
+"#EB6925"
+"#ED6729"
+"#EF652D"
+"#F16431"
+"#F36235"
+"#F56038"
+"#F65E3C"
+"#F85C40"
+"#FA5A43"
+"#FB5847"
+"#FC564B"
+"#FE544F"
+
+)
+
+function heatmap {
+    count=${#HEATCOLORS[@]}
+    count=$count-1
+    last=${HEATCOLORS[$count]}
+    unset ${HEATCOLORS[$count]}
+    scale=$((100 / count))
+    x=0
+    for c in ${HEATCOLORS[@]}; do
+        if [ $1 -lt $((scale * x)) ]; then
+            echo -n " color=\"$c\""
+            return
+        fi
+        x=$x+1
+    done
+    echo -n " color=\"$last\""
+}
+
 
 read mem_used mem_total mem_percent <<< $(awk '
 /MemTotal:/ {total = $2/1024/1024}
@@ -41,42 +162,10 @@ END {
 }
 ' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
 
-
-if [ ${gpu_util%.*} -gt 90 ]; then
-    gpu_color=" color=\"$COLOR_HIGH\""
-elif [ ${gpu_util%.*} -lt 10 ]; then
-    gpu_color=" color=\"$COLOR_LOW\""
-else
-    gpu_color=""
-fi
-
-if [ ${vram_percent%.*} -gt 70 ]; then
-    vram_color=" color=\"$COLOR_HIGH\""
-elif [ ${vram_percent%.*} -gt 90 ]; then
-    vram_color=" color=\"$COLOR_ERROR\""
-elif [ ${vram_percent%.*} -lt 10 ]; then
-    vram_color=" color=\"$COLOR_LOW\""
-else
-    vram_color=""
-fi
-
-if [ ${mem_percent%.*} -gt 70 ]; then
-    mem_color=" color=\"$COLOR_HIGH\""
-elif [ ${mem_percent%.*} -gt 90 ]; then
-    mem_color=" color=\"$COLOR_ERROR\""
-elif [ ${mem_percent%.*} -lt 10 ]; then
-    mem_color=" color=\"$COLOR_LOW\""
-else
-    mem_color=""
-fi
-
-if [ ${cpu_util%.*} -gt $((90*cores)) ]; then
-    cpu_color=" color=\"$COLOR_HIGH\""
-elif [ ${cpu_util%.*} -lt 100 ]; then
-    cpu_color=" color=\"$COLOR_LOW\""
-else
-    cpu_color=""
-fi
+gpu_color=$(heatmap ${gpu_util%.*})
+vram_color=$(heatmap ${vram_percent%.*})
+mem_color=$(heatmap ${mem_percent%.*})
+cpu_color=$(heatmap $((${cpu_util%.*} / cores )))
 
 echo "\
 3D: <span$gpu_color>$gpu_util%</span>  \
