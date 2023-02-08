@@ -1,6 +1,20 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
+## Hardware
+Displays GPU, Memory, and CPU utilization with pretty colors.
+
+
+### Requirements
+  * **`markup=pango` set in i3blocks config**
+    * strongly recommend you also set `interval=repeat` and control speed using `RATE`
+  * `bash` + the gnu tools most sane distros have by default
+
+### Variables
+  * `GPU` : Enables GPU monitoring. Default `true`
+    * probably only works on AMD cards
+  * `RATE` : How long it measures utilization per output. Default `1.0`
+
 ## wp-status
 Displays and controls volume for WirePlumber
 
