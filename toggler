@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source bszi3b-shared.bash || source ${0%/*}/bszi3b-shared.bash || exit 1
+source bszi3b-shared.bash &> /dev/null || source ${0%/*}/bszi3b-shared.bash || exit 1
 
 
 CMD_STATUS=${CMD_STATUS:-""}

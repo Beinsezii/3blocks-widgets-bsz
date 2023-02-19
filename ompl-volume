@@ -1,55 +1,38 @@
 #! /usr/bin/env bash
 
+source bszi3b-shared.bash &> /dev/null || source ${0%/*}/bszi3b-shared.bash || exit 1
+
 ICON_LO=${ICON_LO:-"< "}
-ICON_MID=${ICON_MID:-"<: "}
-ICON_HI=${ICON_HI:-"<# "}
-
-COLOR_PAUSE=${COLOR_PAUSE:-"#2EAFFF"}
-COLOR_PLAY=${COLOR_PLAY:-"#73BC6F"}
-COLOR_STOP=${COLOR_STOP:-""}
-
-COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
+ICON_MID=${ICON_MID:-"<l "}
+ICON_HI=${ICON_HI:-"<ll "}
 
 case "$BLOCK_BUTTON" in
 1 | 4) ompl volume add 0.05 ;;
 3 | 5) ompl volume sub 0.05 ;;
 esac
 
-if [[ $COLOR_PAUSE == "" && $COLOR_PLAY == "" && $COLOR_STOP == "" ]]; then
-    color=""
+state=$(ompl print status)
+
+if [ "$state" = "playing" ]; then
+    COLOR=$COLOR_HI
+elif [ "$state" = "paused" ]; then
+    COLOR=$COLOR_LO
+elif [ "$state" = "stopped" ]; then
+    COLOR=""
 else
-    state=$(ompl print status)
-    if [ "$state" = "playing" ]; then
-        color=$COLOR_PLAY
-    elif [ "$state" = "paused" ]; then
-        color=$COLOR_PAUSE
-    elif [ "$state" = "stopped" ]; then
-        color=$COLOR_STOP
-    else
-        color=$COLOR_ERROR
-    fi
+    COLOR=$COLOR_ERR
 fi
 
 volume=$(ompl volume get)
 
-if (($(echo "$volume <= 0.33" | bc))); then
+if (( ${volume#*.} <= 33 )); then
     icon=$ICON_LO
-elif (($(echo "$volume >= 0.67" | bc))); then
+elif (( ${volume#*.} >= 66 )); then
     icon=$ICON_HI
 else
     icon=$ICON_MID
 fi
 
-if [ "$volume" != "" ]; then
-    echo $icon$volume
-    echo $icon$volume
-    if [ "$color" != "" ]; then
-        echo $color
-    fi
-else
-    echo "OMPL Off"
-    echo "OMPL Off"
-    echo $COLOR_ERROR
-fi
+LONG=$icon$volume
 
-exit 0
+i3bprint

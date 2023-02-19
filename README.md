@@ -1,6 +1,8 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
+
+
 ## Universal options via `bszi3b-shared.bash` library
 Scripts depending on this library will respect all of the following variables when set in the i3blocks config. Scripts that depend on this library **will not run without it.**
 
@@ -16,9 +18,10 @@ Life Pro Tip™®© : Set the colors globally in i3blocks for a coordinated them
   * `PREFIX_SHORT` : Text prepended to short output. Default `$PREFIX`
   * `SUFFIX_SHORT` : Text appended to short output. Default `$SUFFIX`
 
-## Hardware
-Displays GPU, Memory, and CPU utilization with pretty colors.
 
+
+## hardware
+Displays GPU, Memory, and CPU utilization with pretty colors.
 
 ### Requirements
   * **`markup=pango` set in i3blocks config**
@@ -29,6 +32,7 @@ Displays GPU, Memory, and CPU utilization with pretty colors.
   * `GPU` : Enables GPU monitoring. Default `true`
     * probably only works on AMD cards
   * `RATE` : How long it measures utilization per output. Default `1.0`
+
 
 
 ## toggler
@@ -59,12 +63,12 @@ CMD_OFF=ompl stop
 ```
 
 
+
 ## wp-status
 Displays and controls volume for WirePlumber
 
 ### Requirements
-  * `bash`
-  * `bc` for hi/lo icons
+  * **bszi3b-shared.bash**
 
 ### Controls
   * Scroll Up : Increase volume
@@ -77,23 +81,18 @@ Displays and controls volume for WirePlumber
   * `PREFIX` : Prefix applied to all icons. Default none. Handy for running a 2nd time for source
 
   * `ICON_LO` `ICON_MID` `ICON_HI` `ICON_MUTE` : icons to display for different Volume levels. Defaults...
-    * `ICON_LO` : `<) `
-    * `ICON_MID` : `<)) `
-    * `ICON_HI` : `<))) `
-    * `ICON_MUTE` : `< `
+    * `ICON_LO` : "< "
+    * `ICON_MID` : "<l "
+    * `ICON_HI` : "<ll "
+    * `ICON_MUTE` : "<X "
 
-  * `COLOR_LO` `COLOR_MID` `COLOR_HI` `COLOR_MUTE` : colors for different states. Defaults...
-  * COLOR_LO : `#2EAFFF`
-  * COLOR_MID : ` `
-  * COLOR_HI : `#D3A350`
-  * COLOR_MUTE : `#73BC6F`
 
-  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
 ## ompl-status
 Displays a given tagstring with playback controls for the OMPL music player
 
 ### Requirements
+  * **bszi3b-shared.bash**
   * [OMPL](https://github.com/Beinsezii/ompl)
 
 ### Controls
@@ -106,23 +105,20 @@ Displays a given tagstring with playback controls for the OMPL music player
   * `TAGSTRING` : Long tagstring display. Default `<title><artist| / <artist>><album| / <album>>`
   * `TAGSTRING_SHORT` : Short tagstring display. Default `title`
 
-  * `SIGNAL` : If set to a signal number, will kill the appropriate i3blocks widget upon action. Intended for ompl-volume.
+  * `VOL_SIGNAL` : If set to a signal number, will trigger the appropriate i3blocks widget every iteration. Intended for ompl-volume.
 
   * `ICON_PAUSE` `ICON_PLAY` `ICON_STOP` : icons to display for different player states. All default to `""`
 
-  * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
-    * `COLOR_PAUSE` : `#2EAFFF`
-    * `COLOR_PLAY` : `#73BC6F`
-    * `COLOR_STOP` : `""`
 
-  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
 ## ompl-volume
 Displays and controls volume for the OMPL music player
 
+If using with `ompl-status`, recommended you set `interval=0` and use `VOL_SIGNAL` to reset the widget instead.
+
 ### Requirements
+  * **bszi3b-shared.bash**
   * [OMPL](https://github.com/Beinsezii/ompl)
-  * `bc` for hi/lo icons
 
 ### Controls
   * LMB/Scroll Up : Increase volume
@@ -130,16 +126,10 @@ Displays and controls volume for the OMPL music player
 
 ### Variables
   * `ICON_LO` `ICON_MID` `ICON_HI` : icons to display for different Volume levels. Defaults...
-    * `ICON_LO` : `< `
-    * `ICON_MID` : `<: `
-    * `ICON_HI` : `<# `
+    * `ICON_LO` : "< "
+    * `ICON_MID` : "<l "
+    * `ICON_HI` : "<ll "
 
-  * `COLOR_PAUSE` `COLOR_PLAY` `COLOR_STOP` : colors for different player states. Defaults...
-    * `COLOR_PAUSE` : `#2EAFFF`
-    * `COLOR_PLAY` : `#73BC6F`
-    * `COLOR_STOP` : `""`
-
-  * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
 
 # Archived
@@ -160,6 +150,7 @@ Displays GPU utilization, hardware video decoder utilization, and memory usage.
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
 
+
 ## easyeffects-toggle
 Simple widget for EasyEffects global bypass
 
@@ -174,6 +165,7 @@ Simple widget for EasyEffects global bypass
 ### Controls
   * LMB : Turn on (disable bypass)
   * RMB : Turn off (enable bypass)
+
 
 
 ## F.A.Q.

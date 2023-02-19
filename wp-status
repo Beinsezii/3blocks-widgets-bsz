@@ -1,21 +1,13 @@
 #! /usr/bin/env bash
 
+source bszi3b-shared.bash &> /dev/null || source ${0%/*}/bszi3b-shared.bash || exit 1
+
 DEVICE=${DEVICE:-"@DEFAULT_AUDIO_SINK@"}
 
-# handy for changing icon on microphones
-PREFIX=${PREFIX:-""}
-
-ICON_LO=${ICON_LO:-"<) "}
-ICON_MID=${ICON_MID:-"<)) "}
-ICON_HI=${ICON_HI:-"<))) "}
-ICON_MUTE=${ICON_MUTE:-"< "}
-
-COLOR_LO=${COLOR_LO:-"#2EAFFF"}
-COLOR_MID=${COLOR_MID:-""}
-COLOR_HI=${COLOR_HI:-"#D3A350"}
-COLOR_MUTE=${COLOR_MUTE:-"#73BC6F"}
-
-COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
+ICON_LO=${ICON_LO:-"< "}
+ICON_MID=${ICON_MID:-"<l "}
+ICON_HI=${ICON_HI:-"<ll "}
+ICON_MUTE=${ICON_MUTE:-"<X "}
 
 case "$BLOCK_BUTTON" in
 1) wpctl set-mute $DEVICE toggle ;;
@@ -25,36 +17,28 @@ case "$BLOCK_BUTTON" in
 esac
 
 volume=$(wpctl get-volume $DEVICE)
+[ -z "$volume" ] && i3berr "WPCTL Error"
 volume=${volume##*:}
 muted=${volume##* }
 volume=${volume%%\[MUTED\]}
 
 if [ "$muted" == "[MUTED]" ]; then
     icon=$ICON_MUTE
-    color=$COLOR_MUTE
+    COLOR=$COLOR_ALT
 else
-    if (($(echo "$volume < 1.0" | bc))); then
+    main=${volume%.*}
+    sub=${volume#*.}
+    if (( $main < 1 )); then
         icon=$ICON_LO
-        color=$COLOR_LO
-    elif (($(echo "$volume > 1.0" | bc))); then
+        COLOR=$COLOR_LO
+    elif (( $main >= 1 )) && (( $sub >= 1 )); then
         icon=$ICON_HI
-        color=$COLOR_HI
+        COLOR=$COLOR_HI
     else
         icon=$ICON_MID
-        color=$COLOR_MID
     fi
 fi
 
-if [ "$volume" != "" ]; then
-    echo $PREFIX$icon$volume
-    echo $PREFIX$icon$volume
-    if [ "$color" != "" ]; then
-        echo $color
-    fi
-else
-    echo "WPCTL Err"
-    echo "WPCTL Err"
-    echo $COLOR_ERROR
-fi
+LONG=$icon$volume
 
-exit 0
+i3bprint

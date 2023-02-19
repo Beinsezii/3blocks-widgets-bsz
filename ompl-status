@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+source bszi3b-shared.bash &> /dev/null || source ${0%/*}/bszi3b-shared.bash || exit 1
+
 TAGSTRING=${TAGSTRING:-"<title><artist| / <artist>><album| / <album>>"}
 TAGSTRING_SHORT=${TAGSTRING_SHORT:-"title"}
 
@@ -9,11 +11,14 @@ ICON_PAUSE=${ICON_PAUSE:-""}
 ICON_PLAY=${ICON_PLAY:-""}
 ICON_STOP=${ICON_STOP:-""}
 
-COLOR_PAUSE=${COLOR_PAUSE:-"#2EAFFF"}
-COLOR_PLAY=${COLOR_PLAY:-"#73BC6F"}
-COLOR_STOP=${COLOR_STOP:-""}
+assertval $TAGSTRING TAGSTRING
 
-COLOR_ERROR=${COLOR_ERROR:-"#FF898E"}
+tagstring=$(ompl print tagstring "$TAGSTRING")
+[ -z "$tagstring" ] && i3berr "OMPL Off"
+
+[ -z "$TAGSTRING_SHORT" ] && TAGSTRING_SHORT="$TAGSTRING"
+tagstring_short=$(ompl print tagstring "$TAGSTRING_SHORT")
+[ -z "$tagstring_short" ] && i3berr "OMPL TAGSTRING_SHORT Empty"
 
 case "$BLOCK_BUTTON" in
 1) ompl play-pause ;;
@@ -22,42 +27,25 @@ case "$BLOCK_BUTTON" in
 5) ompl previous ;;
 esac
 
-case "$BLOCK_BUTTON" in
-1 | 3 | 4 | 5)
-    if [ $VOL_SIGNAL != "" ]; then
-        pkill -RTMIN+$VOL_SIGNAL i3blocks
-    fi
-    ;;
-esac
-
-status=$(ompl print tagstring "$TAGSTRING")
-status_short=$(ompl print tagstring "$TAGSTRING_SHORT")
 state=$(ompl print status)
 
 if [ "$state" = "playing" ]; then
     icon=$ICON_PLAY
-    color=$COLOR_PLAY
+    COLOR=$COLOR_HI
 elif [ "$state" = "paused" ]; then
     icon=$ICON_PAUSE
-    color=$COLOR_PAUSE
+    COLOR=$COLOR_LO
 elif [ "$state" = "stopped" ]; then
     icon=$ICON_STOP
-    color=$COLOR_STOP
 else
     icon="[?]"
-    color=$COLOR_ERROR
+    COLOR=$COLOR_ERR
 fi
 
-if [ "$status" != "" ]; then
-    echo "$icon $status"
-    echo "$icon $status_short"
-    if [ "$color" != "" ]; then
-        echo $color
-    fi
-else
-    echo "OMPL Off"
-    echo "OMPL Off"
-    echo $COLOR_ERROR
-fi
+LONG=$icon$tagstring
+SHORT=$icon$tagstring_short
 
-exit 0
+i3bprint
+
+[ -n $VOL_SIGNAL ] && pkill -RTMIN+$VOL_SIGNAL i3blocks
+
