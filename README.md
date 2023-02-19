@@ -1,6 +1,21 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
+## Universal options via `bszi3b-shared.bash` library
+Scripts depending on this library will respect all of the following variables when set in the i3blocks config. Scripts that depend on this library **will not run without it.**
+
+Life Pro Tip™®© : Set the colors globally in i3blocks for a coordinated theme.
+
+### Variables 
+  * `COLOR_HI` : Color for active/high values. Default `#aa652c`
+  * `COLOR_LO` : Color for low/inactive values. Default `#0085c0`
+  * `COLOR_ALT` : Color for alternate states. Default `#5c8225`
+  * `COLOR_ERR` : Color for urgent/error states. Default `#c14e79`
+  * `PREFIX` : Text prepended to long output. Default None
+  * `SUFFIX` : Text appended to long output. Default None
+  * `PREFIX_SHORT` : Text prepended to short output. Default `$PREFIX`
+  * `SUFFIX_SHORT` : Text appended to short output. Default `$SUFFIX`
+
 ## Hardware
 Displays GPU, Memory, and CPU utilization with pretty colors.
 
@@ -14,6 +29,35 @@ Displays GPU, Memory, and CPU utilization with pretty colors.
   * `GPU` : Enables GPU monitoring. Default `true`
     * probably only works on AMD cards
   * `RATE` : How long it measures utilization per output. Default `1.0`
+
+
+## toggler
+Simple widget for toggling anything
+
+### Requirements
+  * **bszi3b-shared.bash**
+
+### Variables
+  * `CMD_STATUS` : Command run to query status. Required
+  * `RE_STATUS` : Regular expression to determine status state. Required
+  * `CMD_ON` : Command to run when left clicked. Optional
+  * `CMD_OFF` : Command to run when right clicked. Optional
+
+### Controls
+  * LMB : Run `CMD_ON`
+  * RMB : Run `CMD_OFF`
+
+### Example
+```
+[bsz/toggler]
+interval=5
+PREFIX=OMPL Status: 
+CMD_STATUS=ompl print playing
+RE_STATUS=true
+CMD_ON=ompl play
+CMD_OFF=ompl stop
+```
+
 
 ## wp-status
 Displays and controls volume for WirePlumber
@@ -45,18 +89,6 @@ Displays and controls volume for WirePlumber
   * COLOR_MUTE : `#73BC6F`
 
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
-
-## easyeffects-toggle
-Simple widget for EasyEffects global bypass
-
-### Variables
-  * `COLOR_ON` : Color when on (no bypass)
-  * `COLOR_OFF` :  Color when off (bypass enabled)
-  * `COLOR_ERROR` : Color if anything else happens
-
-### Controls
-  * LMB : Turn on (disable bypass)
-  * RMB : Turn off (enable bypass)
 
 ## ompl-status
 Displays a given tagstring with playback controls for the OMPL music player
@@ -127,6 +159,18 @@ Archived because I no longer have an nvidia gpu.
   * `COLOR_IDLE` : Hex code for color displayed when GPU is idle. Default `#2EAFFF`
   * `COLOR_ERROR` : Hex code for error message color. Default `#FF898E`
 
+
+## easyeffects-toggle
+Simple widget for EasyEffects global bypass
+
+### Variables
+  * `COLOR_ON` : Color when on (no bypass)
+  * `COLOR_OFF` :  Color when off (bypass enabled)
+  * `COLOR_ERROR` : Color if anything else happens
+
+### Controls
+  * LMB : Turn on (disable bypass)
+  * RMB : Turn off (enable bypass)
 
 
 ## F.A.Q.

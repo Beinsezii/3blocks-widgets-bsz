@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+source bszi3b-shared.bash || source ${0%/*}/bszi3b-shared.bash || exit 1
+
+
+CMD_STATUS=${CMD_STATUS:-""}
+RE_STATUS=${RE_STATUS:-""}
+CMD_ON=${CMD_ON:-""}
+CMD_OFF=${CMD_OFF:-""}
+
+assertvar "$CMD_STATUS" CMD_STATUS
+assertvar "$RE_STATUS" RE_STATUS
+
+case "$BLOCK_BUTTON" in
+    1) eval $CMD_ON &> /dev/null ;;
+    3) eval $CMD_OFF &> /dev/null ;;
+esac
+
+output=$(eval $CMD_STATUS)
+
+if [[ $output =~ $RE_STATUS ]]
+then
+    LONG=ON
+else
+    LONG=OFF
+    COLOR=$COLOR_ALT
+fi
+
+i3bprint
