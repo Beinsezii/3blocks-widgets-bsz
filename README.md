@@ -147,7 +147,7 @@ Displays and controls volume for the OMPL music player
 ## nvidia
 Displays GPU utilization, hardware video decoder utilization, and memory usage.
 
-Archived because I no longer have an nvidia gpu.
+**Archived because I no longer have an nvidia gpu.**
 
 ### Requirements
   * GNU `bash`
@@ -162,6 +162,9 @@ Archived because I no longer have an nvidia gpu.
 
 ## easyeffects-toggle
 Simple widget for EasyEffects global bypass
+
+**Archived in favor of using [toggler](https://github.com/Beinsezii/bsz-i3blocklets#toggler) directly**
+<!-- realtalk how tf do I reference #toggler locally. #toggler ./#toggler etc dont work../ -->
 
 ### Variables
   * `COLOR_ON` : Color when on (no bypass)
