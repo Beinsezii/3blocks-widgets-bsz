@@ -1,7 +1,17 @@
 #! /usr/bin/env bash
 
 RATE=${RATE:-"1.0"}
+THERMAL_FLOOR=${THERMAL_FLOOR:-25}
 GPU=${GPU:-true}
+GPU_ID=${GPU_ID:-0}
+GPU_THERMALS=${GPU_THERMALS:-true}
+SEPARATOR=${SEPARATOR:-"]["}
+SEPARATOR_SHORT=${SEPARATOR_SHORT:-" "}
+SEPARATOR_THERMAL=${SEPARATOR_THERMAL:-" °"}
+PREFIX=${PREFIX:-"["}
+SUFFIX=${SUFFIX:-"]"}
+PREFIX_SHORT=${PREFIX_SHORT:-""}
+SUFFIX_SHORT=${SUFFIX_SHORT:-""}
 
 # 100 steps, LCH 60, 75, 30..210
 # converted to hex using crates.io/crates/colcon
@@ -112,7 +122,7 @@ HEATCOLORS=(
 )
 ### HEATCOLORS ### }}}
 
-
+# $1 percent (index)
 function heatmap {
     count=${#HEATCOLORS[@]}
     count=$count-1
@@ -131,6 +141,20 @@ function heatmap {
 }
 
 
+# $1 card $2 hwmon $3 temp
+function gputherm {
+    awk '
+    {
+        floor='$THERMAL_FLOOR'
+        current=$1 / 1000;
+        getline;
+        critical=$1 / 1000;
+        printf "%d %d", current, ((current - floor) / (critical - floor) ) * 100
+    }
+    ' /sys/class/drm/card${1}/device/hwmon/hwmon${2}/temp${3}_input /sys/class/drm/card${1}/device/hwmon/hwmon${2}/temp${3}_crit
+}
+
+
 output_long=""
 output_short=""
 
@@ -138,7 +162,7 @@ output_short=""
 ### GPU ### {{{
 if $GPU; then
 
-    gpu_util=$(cat /sys/class/drm/card0/device/gpu_busy_percent)
+    gpu_util=$(cat /sys/class/drm/card$GPU_ID/device/gpu_busy_percent)
 
     read vram_used vram_total vram_percent <<< $( awk '
     {
@@ -146,13 +170,26 @@ if $GPU; then
         getline;
         total=$1;
         printf "%.1f %.1f %.1f", used/1024/1024/1024, total/1024/1024/1024, used/total*100
-    }' /sys/class/drm/card0/device/mem_info_vram_used /sys/class/drm/card0/device/mem_info_vram_total )
+    }' /sys/class/drm/card$GPU_ID/device/mem_info_vram_used /sys/class/drm/card$GPU_ID/device/mem_info_vram_total )
 
-gpu_color=$(heatmap ${gpu_util%.*})
-vram_color=$(heatmap ${vram_percent%.*})
+    gpu_color=$(heatmap ${gpu_util%.*})
+    vram_color=$(heatmap ${vram_percent%.*})
 
-output_long+="3D: <span$gpu_color>$gpu_util%</span>  VRAM: <span$vram_color>$vram_used / $vram_total</span>  "
-output_short+="3D: <span$gpu_color>$gpu_util%</span> VRAM: <span$vram_color>$vram_percent%</span> "
+    if $GPU_THERMALS; then
+
+        read core core_percent <<< `gputherm $GPU_ID 0 1`
+        read junc junc_percent <<< `gputherm $GPU_ID 0 2`
+        read mem mem_percent <<< `gputherm $GPU_ID 0 3`
+
+        die="$SEPARATOR_THERMAL<span$(heatmap ${core_percent})>$core</span>/<span$(heatmap ${junc_percent})>$junc</span>"
+        memchip="$SEPARATOR_THERMAL<span$(heatmap ${mem_percent})>$mem</span>"
+
+    fi
+
+
+
+    output_long+="3D: <span$gpu_color>$gpu_util%</span>$die${SEPARATOR}VRAM: <span$vram_color>$vram_used / $vram_total</span>$memchip$SEPARATOR"
+    output_short+="3D: <span$gpu_color>$gpu_util%</span>$die${SEPARATOR_SHORT}VRAM: <span$vram_color>$vram_percent%</span>$memchip$SEPARATOR_SHORT"
 
 fi
 ### GPU ### }}}
@@ -167,8 +204,8 @@ read mem_used mem_total mem_percent <<< $(awk '
 }' /proc/meminfo)
 
 mem_color=$(heatmap ${mem_percent%.*})
-output_long+="MEM: <span$mem_color>$mem_used / $mem_total</span>  "
-output_short+="MEM: <span$mem_color>$mem_percent%</span> "
+output_long+="MEM: <span$mem_color>$mem_used / $mem_total</span>$SEPARATOR"
+output_short+="MEM: <span$mem_color>$mem_percent%</span>$SEPARATOR_SHORT"
 ### MEM ### }}}
 
 
@@ -196,7 +233,6 @@ output_long+="CPU: <span$cpu_color>$cpu_util%</span>"
 output_short+="CPU: <span$cpu_color>$cpu_util%</span>"
 ### CPU ### }}}
 
-
-echo $output_long
-echo $output_short
+echo $PREFIX$output_long$SUFFIX
+echo $PREFIX_SHORT$output_short$SUFFIX_SHORT
 exit 0

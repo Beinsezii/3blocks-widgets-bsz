@@ -21,7 +21,7 @@ Life Pro Tip™®© : Set the colors globally in i3blocks for a coordinated them
 
 
 ## hardware
-Displays GPU, Memory, and CPU utilization with pretty colors.
+Displays GPU, Memory, and CPU utilization with pretty colors. Does NOT use `bszi3b-shared.bash`
 
 ### Requirements
   * **`markup=pango` set in i3blocks config**
@@ -29,9 +29,21 @@ Displays GPU, Memory, and CPU utilization with pretty colors.
   * `bash` + the gnu tools most sane distros have by default
 
 ### Variables
+  * `RATE` : How long it measures utilization per output. Default `1.0`
+  * `THERMAL_FLOOR` : Text color starts getting warmer above this value. Default `25` aka 77°F
   * `GPU` : Enables GPU monitoring. Default `true`
     * probably only works on AMD cards
-  * `RATE` : How long it measures utilization per output. Default `1.0`
+  * `GPU_ID` : Which card to monitor. Default `0`
+  * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `true`
+    * currently hardcoded to cardX/hwmon0. Unsure if this is wrong
+
+  * `SEPARATOR` : Separator between categories on long output. Default `][`
+  * `SEPARATOR_SHORT` : Separator between categories on short output. Default ` `
+  * `SEPARATOR_THERMAL` : Separator between thermal and utilization values. Default ` °`
+  * `PREFIX` : Text prepended to long output. Default `[`
+  * `SUFFIX` : Text appended to long output. Default `]`
+  * `PREFIX_SHORT` : Text prepended to short output. Default None
+  * `SUFFIX_SHORT` : Text appended to short output. Default None
 
 
 
