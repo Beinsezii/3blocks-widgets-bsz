@@ -1,7 +1,7 @@
 # bsz-i3blocklets
 ### My own i3blocks widgets/blocklets
 
-
+<img src="./preview.png" />
 
 ## Universal options via `bszi3b-shared.bash` library
 Scripts depending on this library will respect all of the following variables when set in the i3blocks config. Scripts that depend on this library **will not run without it.**
