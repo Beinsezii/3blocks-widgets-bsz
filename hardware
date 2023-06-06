@@ -177,9 +177,9 @@ if $GPU; then
 
     if $GPU_THERMALS; then
 
-        read core core_percent <<< `gputherm $GPU_ID 0 1`
-        read junc junc_percent <<< `gputherm $GPU_ID 0 2`
-        read mem mem_percent <<< `gputherm $GPU_ID 0 3`
+        read core core_percent <<< `gputherm $GPU_ID $GPU_ID 1`
+        read junc junc_percent <<< `gputherm $GPU_ID $GPU_ID 2`
+        read mem mem_percent <<< `gputherm $GPU_ID $GPU_ID 3`
 
         die="$SEPARATOR_THERMAL<span$(heatmap ${core_percent})>$core</span>/<span$(heatmap ${junc_percent})>$junc</span>"
         memchip="$SEPARATOR_THERMAL<span$(heatmap ${mem_percent})>$mem</span>"

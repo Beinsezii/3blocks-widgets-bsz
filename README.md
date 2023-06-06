@@ -35,7 +35,6 @@ Displays GPU, Memory, and CPU utilization with pretty colors. Does NOT use `bszi
     * probably only works on AMD cards
   * `GPU_ID` : Which card to monitor. Default `0`
   * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `true`
-    * currently hardcoded to cardX/hwmon0. Unsure if this is wrong
 
   * `SEPARATOR` : Separator between categories on long output. Default `][`
   * `SEPARATOR_SHORT` : Separator between categories on short output. Default ` `
