@@ -35,10 +35,12 @@ Displays GPU, Memory, and CPU utilization with pretty colors. Does NOT use `bszi
     * probably only works on AMD cards
   * `GPU_ID` : Which card to monitor. Default `0`
   * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `true`
+  * `GPU_POWER` : Also display GPU power in watts. Default `false`
 
   * `SEPARATOR` : Separator between categories on long output. Default `][`
   * `SEPARATOR_SHORT` : Separator between categories on short output. Default ` `
-  * `SEPARATOR_THERMAL` : Separator between thermal and utilization values. Default ` °`
+  * `SEPARATOR_THERMAL` : Separator before thermal values. Default ` °`
+  * `SEPARATOR_POWER` : Separator before power value. Default ` ⌁`
   * `PREFIX` : Text prepended to long output. Default `[`
   * `SUFFIX` : Text appended to long output. Default `]`
   * `PREFIX_SHORT` : Text prepended to short output. Default None
