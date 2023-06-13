@@ -30,11 +30,14 @@ Displays GPU, Memory, and CPU utilization with pretty colors. Does NOT use `bszi
 
 ### Variables
   * `RATE` : How long it measures utilization per output. Default `1.0`
-  * `THERMAL_FLOOR` : Text color starts getting warmer above this value. Default `25` aka 77°F
+  * `THERMAL_FLOOR` : All thermal text starts getting warmer above this value. Default `25` aka 77°F
+  * `CPU_THERMALS` : Also display CPU Tctl/Core max thermals. Default`false`
+  * `CPU_THERMAL_CEIL` : CPU thermal text is hottest at this value. Default `100`
   * `GPU` : Enables GPU monitoring. Default `true`
     * probably only works on AMD cards
   * `GPU_ID` : Which card to monitor. Default `0`
-  * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `true`
+  * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `false`
+    * Ceil taken directly from reported critical temperature
   * `GPU_POWER` : Also display GPU power in watts. Default `false`
 
   * `SEPARATOR` : Separator between categories on long output. Default `][`
