@@ -16,8 +16,8 @@ assertval $TAGSTRING TAGSTRING
 case "$BLOCK_BUTTON" in
 1) ompl play-pause ;;
 3) ompl stop ;;
-4) ompl next ;;
-5) ompl previous ;;
+4) ompl previous ;;
+5) ompl next ;;
 esac
 
 tagstring=$(ompl print tagstring "$TAGSTRING")
