@@ -2,7 +2,7 @@
 
 source bszi3b-shared.bash &> /dev/null || source ${0%/*}/bszi3b-shared.bash || exit 1
 
-TAGSTRING=${TAGSTRING:-"<title><artist| / <artist>><album| / <album>>"}
+TAGSTRING=${TAGSTRING:-""}
 TAGSTRING_SHORT=${TAGSTRING_SHORT:-"title"}
 
 VOL_SIGNAL=${VOL_SIGNAL:-""}
@@ -11,8 +11,6 @@ ICON_PAUSE=${ICON_PAUSE:-""}
 ICON_PLAY=${ICON_PLAY:-""}
 ICON_STOP=${ICON_STOP:-""}
 
-assertval $TAGSTRING TAGSTRING
-
 case "$BLOCK_BUTTON" in
 1) ompl play-pause ;;
 3) ompl stop ;;
@@ -20,12 +18,10 @@ case "$BLOCK_BUTTON" in
 5) ompl next ;;
 esac
 
-tagstring=$(ompl print tagstring "$TAGSTRING")
+[ -z "$TAGSTRING" ] && tagstring=$(ompl print statusline-format) || tagstring=$(ompl print tagstring "$TAGSTRING")
 [ -z "$tagstring" ] && i3berr "OMPL Off"
 
-[ -z "$TAGSTRING_SHORT" ] && TAGSTRING_SHORT="$TAGSTRING"
-tagstring_short=$(ompl print tagstring "$TAGSTRING_SHORT")
-[ -z "$tagstring_short" ] && i3berr "OMPL TAGSTRING_SHORT Empty"
+[ -z "$TAGSTRING_SHORT" ] && tagstring_short=$tagstring || tagstring_short=$(ompl print tagstring "$TAGSTRING_SHORT")
 
 state=$(ompl print status)
 
