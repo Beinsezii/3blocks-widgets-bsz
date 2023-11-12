@@ -118,7 +118,7 @@ Displays a given tagstring with playback controls for the OMPL music player
   * Scroll Down: Previous track
 
 ### Variables
-  * `TAGSTRING` : Long tagstring display. Default `<title><artist| / <artist>><album| / <album>>`
+  * `TAGSTRING` : Long tagstring display. Defaults to OMPL's statusline if unset
   * `TAGSTRING_SHORT` : Short tagstring display. Default `title`
 
   * `VOL_SIGNAL` : If set to a signal number, will trigger the appropriate i3blocks widget every iteration. Intended for ompl-volume.
