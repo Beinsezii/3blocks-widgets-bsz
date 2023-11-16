@@ -198,7 +198,7 @@ if $GPU; then
         cap=$1 / 1000000;
         printf "%d %d", current, (current / cap) * 100
         }
-        ' /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_average /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_cap_default)
+        ' /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_average /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_cap)
 
         gpu_power="$SEPARATOR_POWER<span$(heatmap ${pow_percent})>$pow</span>"
 
