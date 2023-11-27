@@ -274,29 +274,47 @@ END {
 }
 ' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
 
-    if $CPU_THERMALS; then
+if $CPU_THERMALS; then
+    # maybe it should be temp* ?
+    for f in /sys/class/hwmon/hwmon*/temp1_label; do
+        if [ "`cat $f`" == "Tctl" ]; then
+            read cpu_tctl cpu_tctl_percent <<< $(awk '
+            {
+            floor='$THERMAL_FLOOR' * 1000;
+            printf "%d %d", $1 / 1000, ($1 - floor) / ('$CPU_THERMAL_CEIL' * 1000 - floor) * 100
+            }
+            ' ${f%_label}_input)
+            cpu_temp="$SEPARATOR_THERMAL<span$(heatmap $cpu_tctl_percent)>$cpu_tctl</span>"
+            break
+        fi
+    done
+fi
 
-        # maybe it should be temp* ?
-        for f in /sys/class/hwmon/hwmon*/temp1_label; do
+if $CPU_CLOCKS; then
+    max=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq`
 
-            if [ "`cat $f`" == "Tctl" ]; then
-                read cpu_tctl cpu_tctl_percent <<< $(awk '
-                {
-                floor='$THERMAL_FLOOR' * 1000;
-                printf "%d %d", $1 / 1000, ($1 - floor) / ('$CPU_THERMAL_CEIL' * 1000 - floor) * 100
-                }
-                ' ${f%_label}_input)
-                cpu_temp="$SEPARATOR_THERMAL<span$(heatmap $cpu_tctl_percent)>$cpu_tctl</span>"
-                break
-            fi
+    read avg_freq avg_freq_percent top_freq top_freq_percent <<< $(awk '
+BEGIN { avg=0; top=0; iter=0 }
 
-        done
+{
+    freq = $1 / 1000;
+    avg = avg + freq;
+    if (freq > top) {top=freq};
+        iter++
+}
 
-    fi
+END {
+    max = '$max' / 1000;
+    avg = avg / iter;
+    printf "%d %d %d %d", avg, (avg / max) * 100, top, (top / max) * 100
+}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq)
+
+    cpu_freq="$SEPARATOR_CLOCK<span$(heatmap $avg_freq_percent)>$avg_freq</span>"
+fi
 
 cpu_color=$(heatmap $((${cpu_util%.*} / cores )))
-output_long+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_temp"
-output_short+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_temp"
+output_long+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
+output_short+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
 ### CPU ### }}}
 
 echo $PREFIX$output_long$SUFFIX
