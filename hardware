@@ -8,7 +8,6 @@ CPU_THERMAL_CEIL=${CPU_THERMAL_CEIL:-100}
 GPU=${GPU:-true}
 GPU_ID=${GPU_ID:-0}
 GPU_CLOCKS=${GPU_THERMALS:-false}
-GPU_CLOCK_CEIL=${GPU_CLOCK_CEIL:-3000}
 GPU_THERMALS=${GPU_THERMALS:-false}
 GPU_POWER=${GPU_POWER:-false}
 SEPARATOR=${SEPARATOR:-"]["}
@@ -172,10 +171,18 @@ function gputherm {
 
 # $1 card $2 freq
 function gpufreq {
+    label=`cat /sys/class/drm/card${1}/device/hwmon/hwmon*/freq${2}_label`
+
+    read freq_max <<< $(awk '
+    BEGIN {max=100}
+    {val = strtonum(substr($2, 0, length($2)-3)); if (val > max) {max=val}}
+    END {printf "%d", max}
+    ' /sys/class/drm/card${1}/device/pp_dpm_${label})
+
     awk '
     {
         current=$1 / 1000000;
-        printf "%d %d", current, (current / '$GPU_CLOCK_CEIL') * 100
+        printf "%d %d", current, (current / '$freq_max') * 100
     }
     ' /sys/class/drm/card${1}/device/hwmon/hwmon*/freq${2}_input
 }
