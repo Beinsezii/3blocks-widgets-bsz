@@ -2,16 +2,18 @@
 
 RATE=${RATE:-"1.0"}
 THERMAL_FLOOR=${THERMAL_FLOOR:-25}
-CPU_THERMALS=${CPU_THERMALS:-false}
 CPU_CLOCKS=${CPU_CLOCKS:-false}
+CPU_THERMALS=${CPU_THERMALS:-false}
 CPU_THERMAL_CEIL=${CPU_THERMAL_CEIL:-100}
 GPU=${GPU:-true}
 GPU_ID=${GPU_ID:-0}
-GPU_THERMALS=${GPU_THERMALS:-false}
 GPU_CLOCKS=${GPU_THERMALS:-false}
+GPU_CLOCK_CEIL=${GPU_CLOCK_CEIL:-3000}
+GPU_THERMALS=${GPU_THERMALS:-false}
 GPU_POWER=${GPU_POWER:-false}
 SEPARATOR=${SEPARATOR:-"]["}
 SEPARATOR_SHORT=${SEPARATOR_SHORT:-" "}
+SEPARATOR_CLOCK=${SEPARATOR_THERMAL:-" ∿"}
 SEPARATOR_THERMAL=${SEPARATOR_THERMAL:-" °"}
 SEPARATOR_POWER=${SEPARATOR_POWER:-" ⌁"}
 PREFIX=${PREFIX:-"["}
@@ -168,6 +170,16 @@ function gputherm {
     ' /sys/class/drm/card${1}/device/hwmon/hwmon*/temp${2}_input /sys/class/drm/card${1}/device/hwmon/hwmon*/temp${2}_crit
 }
 
+# $1 card $2 freq
+function gpufreq {
+    awk '
+    {
+        current=$1 / 1000000;
+        printf "%d %d", current, (current / '$GPU_CLOCK_CEIL') * 100
+    }
+    ' /sys/class/drm/card${1}/device/hwmon/hwmon*/freq${2}_input
+}
+
 output_long=""
 output_short=""
 
@@ -187,6 +199,13 @@ if $GPU; then
 
     gpu_color=$(heatmap ${gpu_util%.*})
     vram_color=$(heatmap ${vram_percent%.*})
+
+    if $GPU_CLOCKS; then
+        read core_freq core_freq_percent <<< `gpufreq $GPU_ID 1`
+        read mem_freq mem_freq_percent <<< `gpufreq $GPU_ID 2`
+        freq_core="$SEPARATOR_CLOCK<span$(heatmap ${core_freq_percent})>$core_freq</span>"
+        freq_mem="$SEPARATOR_CLOCK<span$(heatmap ${mem_freq_percent})>$mem_freq</span>"
+    fi
 
     if $GPU_THERMALS; then
 
@@ -215,8 +234,8 @@ if $GPU; then
     fi
 
 
-    output_long+="3D: <span$gpu_color>$gpu_util%</span>$therm_die$gpu_power${SEPARATOR}VRAM: <span$vram_color>$vram_used / $vram_total</span>$therm_mem$SEPARATOR"
-    output_short+="3D: <span$gpu_color>$gpu_util%</span>$therm_die$gpu_power${SEPARATOR_SHORT}VRAM: <span$vram_color>$vram_percent%</span>$therm_mem$SEPARATOR_SHORT"
+    output_long+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR}VRAM: <span$vram_color>$vram_used / $vram_total</span>$freq_mem$therm_mem$SEPARATOR"
+    output_short+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR_SHORT}VRAM: <span$vram_color>$vram_percent%</span>$freq_mem$therm_mem$SEPARATOR_SHORT"
 
 fi
 ### GPU ### }}}
