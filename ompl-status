@@ -18,7 +18,7 @@ case "$BLOCK_BUTTON" in
 5) ompl next ;;
 esac
 
-[ -z "$TAGSTRING" ] && tagstring=$(ompl print statusline-format) || tagstring=$(ompl print tagstring "$TAGSTRING")
+[ -z "$TAGSTRING" ] && tagstring=$(ompl print statusline) || tagstring=$(ompl print tagstring "$TAGSTRING")
 [ -z "$tagstring" ] && i3berr "OMPL Off"
 
 [ -z "$TAGSTRING_SHORT" ] && tagstring_short=$tagstring || tagstring_short=$(ompl print tagstring "$TAGSTRING_SHORT")
