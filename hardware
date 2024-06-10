@@ -2,11 +2,14 @@
 
 RATE=${RATE:-"1.0"}
 THERMAL_FLOOR=${THERMAL_FLOOR:-25}
+TEXT=${TEXT:-false}
+CPU=${CPU:-true}
 CPU_CLOCKS=${CPU_CLOCKS:-false}
 CPU_THERMALS=${CPU_THERMALS:-false}
 CPU_THERMAL_CEIL=${CPU_THERMAL_CEIL:-100}
+MEM=${MEM:-true}
 GPU=${GPU:-true}
-GPU_ID=${GPU_ID:-0}
+GPU_ID=${GPU_ID:-1}
 GPU_CLOCKS=${GPU_THERMALS:-false}
 GPU_THERMALS=${GPU_THERMALS:-false}
 GPU_POWER=${GPU_POWER:-false}
@@ -148,7 +151,7 @@ function heatmap {
     scale=$((100 / count))
     x=0
     for c in ${HEATCOLORS[@]}; do
-        if [ $1 -lt $((scale * x)) ]; then
+        if [[ $1 -lt $((scale * x)) ]]; then
             echo -n " color=\"$c\""
             return
         fi
@@ -206,14 +209,16 @@ if $GPU; then
         printf "%.1f %.1f %.1f", used/1024/1024/1024, total/1024/1024/1024, used/total*100
     }' /sys/class/drm/card$GPU_ID/device/mem_info_vram_used /sys/class/drm/card$GPU_ID/device/mem_info_vram_total )
 
-    gpu_color=$(heatmap ${gpu_util%.*})
-    vram_color=$(heatmap ${vram_percent%.*})
-
     if $GPU_CLOCKS; then
         read core_freq core_freq_percent <<< `gpufreq $GPU_ID 1`
         read mem_freq mem_freq_percent <<< `gpufreq $GPU_ID 2`
-        freq_core="$SEPARATOR_CLOCK<span$(heatmap ${core_freq_percent})>$core_freq</span>"
-        freq_mem="$SEPARATOR_CLOCK<span$(heatmap ${mem_freq_percent})>$mem_freq</span>"
+        if ! $TEXT ; then
+            freq_core="$SEPARATOR_CLOCK<span$(heatmap ${core_freq_percent})>$core_freq</span>"
+            freq_mem="$SEPARATOR_CLOCK<span$(heatmap ${mem_freq_percent})>$mem_freq</span>"
+        else
+            freq_core="$SEPARATOR_CLOCK$core_freq"
+            freq_mem="$SEPARATOR_CLOCK$mem_freq"
+        fi
     fi
 
     if $GPU_THERMALS; then
@@ -222,8 +227,13 @@ if $GPU; then
         read junc junc_percent <<< `gputherm $GPU_ID 2`
         read mem mem_percent <<< `gputherm $GPU_ID 3`
 
-        therm_die="$SEPARATOR_THERMAL<span$(heatmap ${core_percent})>$core</span>/<span$(heatmap ${junc_percent})>$junc</span>"
-        therm_mem="$SEPARATOR_THERMAL<span$(heatmap ${mem_percent})>$mem</span>"
+        if ! $TEXT ; then
+            therm_die="$SEPARATOR_THERMAL<span$(heatmap ${core_percent})>$core</span>/<span$(heatmap ${junc_percent})>$junc</span>"
+            therm_mem="$SEPARATOR_THERMAL<span$(heatmap ${mem_percent})>$mem</span>"
+        else
+            therm_die="$SEPARATOR_THERMAL$core/$junc"
+            therm_mem="$SEPARATOR_THERMAL$mem"
+        fi
 
     fi
 
@@ -238,92 +248,137 @@ if $GPU; then
         }
         ' /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_average /sys/class/drm/card$GPU_ID/device/hwmon/hwmon*/power1_cap)
 
-        gpu_power="$SEPARATOR_POWER<span$(heatmap ${pow_percent})>$pow</span>"
+        if ! $TEXT ; then
+            gpu_power="$SEPARATOR_POWER<span$(heatmap ${pow_percent})>$pow</span>"
+        else
+            gpu_power="$SEPARATOR_POWER$pow"
+        fi
 
     fi
 
 
-    output_long+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR}VRAM: <span$vram_color>$vram_used / $vram_total</span>$freq_mem$therm_mem$SEPARATOR"
-    output_short+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR_SHORT}VRAM: <span$vram_color>$vram_percent%</span>$freq_mem$therm_mem$SEPARATOR_SHORT"
+    if ! $TEXT; then
+        gpu_color=$(heatmap ${gpu_util%.*})
+        vram_color=$(heatmap ${vram_percent%.*})
+        output_long+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR}VRAM: <span$vram_color>$vram_used / $vram_total</span>$freq_mem$therm_mem"
+        output_short+="3D: <span$gpu_color>$gpu_util%</span>$freq_core$therm_die$gpu_power${SEPARATOR_SHORT}VRAM: <span$vram_color>$vram_percent%</span>$freq_mem$therm_mem"
+    else
+        output_long+="3D: $gpu_util%$freq_core$therm_die$gpu_power${SEPARATOR}VRAM: $vram_used / $vram_total$freq_mem$therm_mem"
+        output_short+="3D: $gpu_util%$freq_core$therm_die$gpu_power${SEPARATOR_SHORT}VRAM: $vram_percent%$freq_mem$therm_mem"
+    fi
 
 fi
 ### GPU ### }}}
 
 
 ### MEM ### {{{
-read mem_used mem_total mem_percent <<< $(awk '
-/MemTotal:/ {total = $2/1024/1024}
-/MemAvailable:/ {
-    used = total-$2/1024/1024;
-    printf "%.1f %.1f %.1f", used, total, used/total*100
-}' /proc/meminfo)
+if $MEM; then
+    if $GPU ; then
+        output_long+="$SEPARATOR"
+        output_short+="$SEPARATOR_SHORT"
+    fi
+    read mem_used mem_total mem_percent <<< $(awk '
+    /MemTotal:/ {total = $2/1024/1024}
+    /MemAvailable:/ {
+        used = total-$2/1024/1024;
+        printf "%.1f %.1f %.1f", used, total, used/total*100
+    }' /proc/meminfo)
 
-mem_color=$(heatmap ${mem_percent%.*})
-output_long+="MEM: <span$mem_color>$mem_used / $mem_total</span>$SEPARATOR"
-output_short+="MEM: <span$mem_color>$mem_percent%</span>$SEPARATOR_SHORT"
+    if ! $TEXT ; then
+        mem_color=$(heatmap ${mem_percent%.*})
+        output_long+="MEM: <span$mem_color>$mem_used / $mem_total</span>"
+        output_short+="MEM: <span$mem_color>$mem_percent%</span>"
+    else
+        output_long+="MEM: $mem_used / $mem_total"
+        output_short+="MEM: $mem_percent%"
+    fi
+fi
 ### MEM ### }}}
 
 
 ### CPU ### {{{
-read cpu_util cores <<< $(awk '
-/cpu / {
-    if (iter==1) {
-        used_base=used
-        idle_base=idle
-        total_base=total
-    };
-    used=$2+$3+$4
-    idle=$5
-    total=used+idle
-    iter=1
-}
-END {
-    cores=(NR-2)/2
-    printf "%.1f %d", (used - used_base) / (total-total_base) * 100 * cores, cores
-}
-' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
+if $CPU; then
+    if $GPU || $MEM ; then
+        output_long+="$SEPARATOR"
+        output_short+="$SEPARATOR_SHORT"
+    fi
+    read cpu_util cores <<< $(awk '
+    /cpu / {
+        if (iter==1) {
+            used_base=used
+            idle_base=idle
+            total_base=total
+        };
+        used=$2+$3+$4
+        idle=$5
+        total=used+idle
+        iter=1
+    }
+    END {
+        cores=(NR-2)/2
+        printf "%.1f %d", (used - used_base) / (total-total_base) * 100 * cores, cores
+    }
+    ' <(grep 'cpu' /proc/stat) <(sleep $RATE; grep 'cpu' /proc/stat))
 
-if $CPU_THERMALS; then
-    # maybe it should be temp* ?
-    for f in /sys/class/hwmon/hwmon*/temp1_label; do
-        if [ "`cat $f`" == "Tctl" ]; then
-            read cpu_tctl cpu_tctl_percent <<< $(awk '
-            {
-            floor='$THERMAL_FLOOR' * 1000;
-            printf "%d %d", $1 / 1000, ($1 - floor) / ('$CPU_THERMAL_CEIL' * 1000 - floor) * 100
-            }
-            ' ${f%_label}_input)
-            cpu_temp="$SEPARATOR_THERMAL<span$(heatmap $cpu_tctl_percent)>$cpu_tctl</span>"
-            break
+    if $CPU_THERMALS; then
+        # maybe it should be temp* ?
+        for f in /sys/class/hwmon/hwmon*/temp1_label; do
+            if [ "`cat $f`" == "Tctl" ]; then
+                read cpu_tctl cpu_tctl_percent <<< $(awk '
+                {
+                floor='$THERMAL_FLOOR' * 1000;
+                printf "%d %d", $1 / 1000, ($1 - floor) / ('$CPU_THERMAL_CEIL' * 1000 - floor) * 100
+                }
+                ' ${f%_label}_input)
+
+                if ! $TEXT ; then
+                    cpu_temp="$SEPARATOR_THERMAL<span$(heatmap $cpu_tctl_percent)>$cpu_tctl</span>"
+                else
+                    cpu_temp="$SEPARATOR_THERMAL$cpu_tctl"
+                fi
+
+                break
+            fi
+        done
+    fi
+
+    if $CPU_CLOCKS; then
+        max=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq`
+
+        read avg_freq avg_freq_percent top_freq top_freq_percent <<< $(awk '
+    BEGIN { avg=0; top=0; iter=0 }
+
+    {
+        freq = $1 / 1000;
+        avg = avg + freq;
+        if (freq > top) {top=freq};
+            iter++
+    }
+
+    END {
+        max = '$max' / 1000;
+        avg = avg / iter;
+        printf "%d %d %d %d", avg, (avg / max) * 100, top, (top / max) * 100
+    }' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq)
+
+        if ! $TEXT ; then
+            cpu_freq="$SEPARATOR_CLOCK<span$(heatmap $avg_freq_percent)>$avg_freq</span>"
+        else
+            cpu_freq="$SEPARATOR_CLOCK$avg_freq"
         fi
-    done
+    fi
+
+    if ! $TEXT ; then
+        cpu_color=$(heatmap $((${cpu_util%.*} / cores )))
+        output_long+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
+        output_short+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
+    else
+        output_long+="CPU: $cpu_util%$cpu_freq$cpu_temp"
+        output_short+="CPU: $cpu_util%$cpu_freq$cpu_temp"
+    fi
+else
+    sleep $RATE
 fi
-
-if $CPU_CLOCKS; then
-    max=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq`
-
-    read avg_freq avg_freq_percent top_freq top_freq_percent <<< $(awk '
-BEGIN { avg=0; top=0; iter=0 }
-
-{
-    freq = $1 / 1000;
-    avg = avg + freq;
-    if (freq > top) {top=freq};
-        iter++
-}
-
-END {
-    max = '$max' / 1000;
-    avg = avg / iter;
-    printf "%d %d %d %d", avg, (avg / max) * 100, top, (top / max) * 100
-}' /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq)
-
-    cpu_freq="$SEPARATOR_CLOCK<span$(heatmap $avg_freq_percent)>$avg_freq</span>"
-fi
-
-cpu_color=$(heatmap $((${cpu_util%.*} / cores )))
-output_long+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
-output_short+="CPU: <span$cpu_color>$cpu_util%</span>$cpu_freq$cpu_temp"
 ### CPU ### }}}
 
 echo $PREFIX$output_long$SUFFIX

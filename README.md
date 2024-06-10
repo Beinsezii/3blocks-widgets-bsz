@@ -29,14 +29,17 @@ Displays GPU, Memory, and CPU utilization with pretty colors. Does NOT use `bszi
   * `bash` + the gnu tools most sane distros have by default
 
 ### Variables
-  * `RATE` : How long it measures utilization per output. Default `1.0`
+  * `RATE` : How long it measures utilization per output in seconds. Default `1.0`
   * `THERMAL_FLOOR` : All thermal text starts getting warmer above this value. Default `25` aka 77°F
+  * `TEXT` : Output plain text instead of colored html. Default `false`
+  * `CPU` : Enables CPU monitoring. Default `true`
   * `CPU_CLOCKS` : Also display average CPU core clocks. Default `false`
   * `CPU_THERMALS` : Also display CPU Tctl/Core max thermals. Default`false`
   * `CPU_THERMAL_CEIL` : CPU thermal text is hottest at this value. Default `100`
+  * `MEM` : Enables RAM monitoring. Default `true`
   * `GPU` : Enables GPU monitoring. Default `true`
     * probably only works on AMD cards
-  * `GPU_ID` : Which card to monitor. Default `0`
+  * `GPU_ID` : Which card to monitor. Default `1`
   * `GPU_CLOCKS` : Also display GPU Core/Memory clocks. Default `false`
   * `GPU_THERMALS` : Also display GPU Core/Junction/Memory thermals. Default `false`
     * Ceil taken directly from reported critical temperature
